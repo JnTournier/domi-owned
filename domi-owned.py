@@ -37,9 +37,10 @@ def main():
 	fingerprint_parser.add_argument('--username', help='Username', default=None)
 	fingerprint_parser.add_argument('--password', help='Password', default=None)
 
-	enum_parser = subparsers.add_parser('enumerate', help='Enumerate Domino files and directories', usage='./domi-owned.py enumerate URL --username USERNAME --password PASSWORD --wordlist WORDLIST')
+	enum_parser = subparsers.add_parser('enumerate', help='Enumerate Domino files and directories', usage='./domi-owned.py enumerate URL --username USERNAME --password PASSWORD --wordlist WORDLIST --verify')
 	enum_parser.add_argument('url', help='Domino server URL')
 	enum_parser.add_argument('--wordlist', help='Wordlist containing Domino files and directories', default=None)
+	enum_parser.add_argument('--verify', help='Ensure that you verify the ssl certificate', action='store_true')
 	enum_parser.add_argument('--username', help='Username', default=None)
 	enum_parser.add_argument('--password', help='Password', default=None)
 
@@ -48,8 +49,9 @@ def main():
 	brute_parser.add_argument('userlist', help='List of usernames')
 	brute_parser.add_argument('--password', help='Password', default=None)
 
-	dump_parser = subparsers.add_parser('hashdump', help='Dump Domino account hashes', usage='./domi-owned.py hashdump URL --username USERNAME --password PASSWORD')
+	dump_parser = subparsers.add_parser('hashdump', help='Dump Domino account hashes', usage='./domi-owned.py hashdump URL --username USERNAME --password PASSWORD --verify')
 	dump_parser.add_argument('url', help='Domino server URL')
+	dump_parser.add_argument('--verify', help='Ensure that you verify the ssl certificate', action='store_true')
 	dump_parser.add_argument('--username', help='Username', default=None)
 	dump_parser.add_argument('--password', help='Password', default=None)
 
@@ -70,7 +72,7 @@ def main():
 	elif args.action == 'enumerate':
 		print_status('Enumerating Domino URLs')
 		domino = Enumerate(args.url, username=args.username, password=args.password)
-		domino.enumerate(args.wordlist)
+		domino.enumerate(args.wordlist, verify=args.verify)
 
 	# Brute force
 	elif args.action == 'bruteforce':
@@ -86,7 +88,7 @@ def main():
 	elif args.action == 'hashdump':
 		print_status('Dumping Domino account hashes')
 		domino = HashDump(args.url, username=args.username, password=args.password)
-		domino.dump()
+		domino.dump(verify=args.verify)
 
 	# Quick Console
 	elif args.action == 'quickconsole':

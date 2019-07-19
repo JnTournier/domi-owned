@@ -29,11 +29,13 @@ from .main import DomiOwned
 
 class HashDump(DomiOwned):
 
-	def dump(self):
+	def dump(self, verify):
 		"""
 		Dump Domino account hashes.
 		"""
 		# Check if the user can access names.nsf
+		self.sslVerify = verify
+		
 		if self.check_access(self.username, self.password)['names.nsf']:
 
 			if self.auth_type == 'basic':
@@ -96,7 +98,7 @@ class HashDump(DomiOwned):
 		loop.add_signal_handler(signal.SIGINT, self.signal_handler)
 
 		if self.username and self.auth_type == 'basic':
-			client = aiohttp.ClientSession(headers=self.utilities.HEADERS, auth=aiohttp.BasicAuth(self.username, self.password), loop=loop)
+			client = aiohttp.ClientSession(headers=self.utilities.HEADERS, auth=aiohttp.BasicAuth(self.username, self.password), loop=loop, connector=aiohttp.TCPConnector(verify_ssl=self.sslVerify))
 
 		elif self.auth_type == 'form':
 			# Check if cookies or SSO are being used for authentication
@@ -107,10 +109,10 @@ class HashDump(DomiOwned):
 			else:
 				session_id = None
 
-			client = aiohttp.ClientSession(headers=self.utilities.HEADERS, cookies=session_id, loop=loop)
+			client = aiohttp.ClientSession(headers=self.utilities.HEADERS, cookies=session_id, loop=loop, connector=aiohttp.TCPConnector(verify_ssl=self.sslVerify))
 
 		else:
-			client = aiohttp.ClientSession(headers=self.utilities.HEADERS, loop=loop)
+			client = aiohttp.ClientSession(headers=self.utilities.HEADERS, loop=loop, connector=aiohttp.TCPConnector(verify_ssl=self.sslVerify))
 
 		#with client as session:
 		try:

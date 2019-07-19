@@ -42,6 +42,8 @@ class DomiOwned(object):
 	session.verify = False
 	session.timeout = 10
 
+	sslVerify = False # This var will be use to disable the ssl check in aiohttp 
+
 	post_data = {}
 
 	def __init__(self, url, **kwargs):
